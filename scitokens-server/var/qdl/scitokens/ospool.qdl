@@ -19,8 +19,19 @@ group_scopes_read.  := [];
 group_scopes_write. := [];
 if [is_defined(record.groups.)] then
 [
+    if [!reduce(@&&, in_group2("ap7-login", record.groups.))] then
+    [
+        sys_err.ok := false;
+        sys_err.message := "User must be in the ap7-login group;
+        return();
+    ]
+
     group_scopes_read.  := ~record.groups. + 'read:/ospool/PROTECTED/projects';
     group_scopes_write. := ~record.groups. + 'write:/ospool/PROTECTED/projects';
+] else [
+    sys_err.ok := false;
+    sys_err.message := 'User must be in the OSG groups';
+    return();
 ]
 group_scopes_read.  := mask(group_scopes_read.,  -1 < list_starts_with(group_scopes_read.,  scopes.));
 group_scopes_write. := mask(group_scopes_write., -1 < list_starts_with(group_scopes_write., scopes.));
