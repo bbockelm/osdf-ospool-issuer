@@ -1,0 +1,36 @@
+/*
+ * This script changes the provided scopes based on request.
+ *
+ * TODO:
+ * - prefix matching, allowing more refined scopes.
+ * - have token prefix path specified by an INI file instead of hardcode.
+ */
+
+record. := script_load('scitokens/comanage.qdl');
+
+if [0 == size(record.)] then
+[
+     sys_err.ok := false;
+     sys_err.message := 'Failed to locate the user record.';
+     return();
+]
+
+group_scopes_read.  := [];
+group_scopes_write. := [];
+if [is_defined(record.groups.)] then
+[
+    group_scopes_read.  := ~record.groups. + 'read:/ospool/PROTECTED/projects';
+    group_scopes_write. := ~record.groups. + 'write:/ospool/PROTECTED/projects';
+]
+group_scopes_read.  := mask(group_scopes_read.,  -1 < list_starts_with(group_scopes_read.,  scopes.));
+group_scopes_write. := mask(group_scopes_write., -1 < list_starts_with(group_scopes_write., scopes.));
+
+user_scopes_read   := '';
+user_scopres_write := '';
+if [0 < size(record.voPersonApplicationUID.)] then
+[
+     user_scopes_read  := 'read:/ospool/PROTECTED/user/' + record.voPersonApplicationUID;
+     user_scopes_write := 'write:/ospool/PROTECTED/user/' + record.voPersonApplicationUID;
+]
+
+access_token.scope := detokenize(unique(group_scopes_read.), ' ', 2) + ' ' + detokenize(unique(group_scopes_write.), ' ', 2) + ' ' + user_scopes_read + ' ' + user_scopes_write;
