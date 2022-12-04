@@ -48,6 +48,7 @@
                 endpoint="oidc-cm"
                 anonymousOK="true"
                 autoApprove="true"
+                autoApproverName="anonymous"
                 template="localhost:template"
            />
            <api protocol="rfc7592" enabled="true" endpoint="oidc-cm"/>

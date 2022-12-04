@@ -114,7 +114,6 @@
         <SSLHostConfig>
             <Certificate certificateKeyFile="conf/hostkey.pem"
                          certificateFile="conf/hostcert.pem"
-                         certificateChainFile="conf/CA-bundle.pem"
                          type="RSA" />
         </SSLHostConfig>
     </Connector>
